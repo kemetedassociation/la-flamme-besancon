@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>La Flamme — Pizza, Burgers, Tacos &amp; Sandwichs à Besançon</title>
+<meta name="description" content="La Flamme — pizzeria, snack &amp; burgers à Besançon. Fait maison, cuisine fraîche, halal. Commandez sur place, à emporter ou en livraison.">
+<link rel="icon" href="assets/img/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Manrope:wght@400;500;600;700;800&family=Archivo+Black&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<a class="skip-link" href="#contenu">Aller au contenu</a>
+
+<header class="nav" id="nav" data-state="top">
+  <div class="nav__inner">
+    <a href="index.html" class="nav__brand">
+      <img src="assets/img/logo.png" alt="La Flamme" class="nav__logo">
+      <span class="nav__brand-text">La Flamme</span>
+    </a>
+
+    <nav class="nav__links" aria-label="Navigation principale">
+      <a href="menu.html" data-nav-link>Menu</a>
+      <a href="bons-plans.html" data-nav-link>Bons plans</a>
+      <a href="index.html#infos" data-nav-link>Infos &amp; horaires</a>
+      <span class="nav__indicator" aria-hidden="true"></span>
+    </nav>
+
+    <div class="nav__cta">
+      <a href="tel:0952991480" class="btn btn--ghost btn--sm">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.9.36 1.79.7 2.63a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.45-1.27a2 2 0 0 1 2.11-.45c.84.34 1.73.58 2.63.7A2 2 0 0 1 22 16.92z"/></svg>
+        09 52 99 14 80
+      </a>
+      <button type="button" class="nav__cart-btn" id="cartBtn" aria-label="Voir le panier">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+        <span class="nav__cart-badge">0</span>
+      </button>
+    </div>
+
+    <button class="nav__burger" id="burgerBtn" aria-expanded="false" aria-controls="mobileMenu" aria-label="Ouvrir le menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+  <nav aria-label="Navigation mobile">
+    <a href="menu.html" data-nav-link data-mobile-index="0">Menu</a>
+    <a href="bons-plans.html" data-nav-link data-mobile-index="1">Bons plans</a>
+    <a href="index.html#infos" data-nav-link data-mobile-index="2">Infos &amp; horaires</a>
+    <a href="tel:0952991480" data-mobile-index="3" class="mobile-menu__cta">Appeler le restaurant</a>
+  </nav>
+  <div class="mobile-menu__socials" data-mobile-index="4">
+    <span>@la.flamme.besancon</span>
+  </div>
+</div>
+
+<main id="contenu">
+
+<section class="hero" id="top">
+  <div class="hero__bg" aria-hidden="true"></div>
+  <div class="hero__grain" aria-hidden="true"></div>
+
+  <!-- Reserved slot for a generative animated background (Unicorn Studio /
+       Spline export). Empty on purpose: paste the provided embed <script>
+       + element here once available — it will sit above .hero__bg and
+       below the content below without touching anything else. -->
+  <div class="hero__embed" id="heroEmbed" aria-hidden="true"></div>
+
+  <div class="hero__inner">
+    <div class="hero__copy">
+      <p class="hero__eyebrow" data-hero="1">
+        <span class="dot"></span> Depuis 2026 · Besançon · Halal
+      </p>
+
+      <h1 class="hero__title" data-hero="2">
+        <span class="hero__title-line">LA</span>
+        <span class="hero__title-line hero__title-line--accent">FLAMME</span>
+      </h1>
+
+      <p class="hero__subtitle" data-hero="3">
+        Pizzas au feu, burgers smashés, tacos généreux et sandwichs maison —
+        une cuisine fraîche, préparée sur place, jusque tard le soir.
+      </p>
+
+      <div class="hero__actions" data-hero="4">
+        <a href="menu.html" class="btn btn--primary btn--lg">
+          Voir le menu
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+        <a href="bons-plans.html" class="btn btn--outline btn--lg">Les bons plans</a>
+      </div>
+
+      <div class="hero__badges" data-hero="5">
+        <span class="badge">★★★ Authentique &amp; Gourmand</span>
+        <span class="badge badge--platform">Uber&nbsp;Eats</span>
+        <span class="badge badge--platform">Deliveroo</span>
+      </div>
+    </div>
+
+    <div class="hero__visual" data-hero="6">
+      <div class="hero__visual-frame">
+        <img src="assets/img/hero_spread.jpg" alt="Assortiment La Flamme : pizza, sandwich pain maison et milkshake" loading="eager">
+      </div>
+      <div class="hero__visual-tag hero__visual-tag--1">Pâte fraîche maison</div>
+      <div class="hero__visual-tag hero__visual-tag--2">Cuisiné à la demande</div>
+    </div>
+  </div>
+
+  <div class="hero__scroll-cue" aria-hidden="true">
+    <span>Découvrir</span>
+    <div class="hero__scroll-line"></div>
+  </div>
+</section>
+
+<div class="marquee" aria-hidden="true">
+  <div class="marquee__track">
+    <span>PIZZA · SNACKS · PLATS · BURGERS · TACOS · SANDWICHS · DESSERTS · </span>
+    <span>PIZZA · SNACKS · PLATS · BURGERS · TACOS · SANDWICHS · DESSERTS · </span>
+  </div>
+</div>
+
+<!-- Category shortcuts — deep-link straight into a menu.html tab -->
+<section class="menu" style="padding-top:5rem; padding-bottom:1rem;">
+  <div class="section-head reveal">
+    <p class="section-eyebrow">À la carte</p>
+    <h2 class="section-title">Choisissez <span class="script">votre envie</span></h2>
+  </div>
+  <div class="tabs reveal" style="justify-content:center; background:transparent; border:none; padding:0; gap:.7rem; flex-wrap:wrap;">
+    <a href="menu.html#tacos" class="btn btn--outline btn--sm">Tacos</a>
+    <a href="menu.html#pizzas" class="btn btn--outline btn--sm">Pizzas</a>
+    <a href="menu.html#sandwichs" class="btn btn--outline btn--sm">Sandwichs</a>
+    <a href="menu.html#burgers" class="btn btn--outline btn--sm">Burgers</a>
+    <a href="menu.html#texmex" class="btn btn--outline btn--sm">Tex Mex</a>
+    <a href="menu.html#desserts" class="btn btn--outline btn--sm">Desserts</a>
+  </div>
+</section>
+
+<!-- Best-sellers — infinite carousel, real scrollable strip on touch/reduced-motion -->
+<section class="best" id="populaires">
+  <div class="section-head reveal">
+    <p class="section-eyebrow">La sélection</p>
+    <h2 class="section-title">Nos <span class="script">best-sellers</span></h2>
+  </div>
+
+  <div class="carousel reveal">
+    <div class="carousel__track" id="carouselTrack"></div>
+  </div>
+</section>
+
+<!-- Bons plans teaser -->
+<section class="best" style="padding-top:1rem;">
+  <div class="info-card reveal" style="max-width:1240px; margin:0 auto; flex-direction:row; align-items:center; justify-content:space-between; gap:1.5rem; flex-wrap:wrap;">
+    <div>
+      <h3>Petite fringale ou envie de partager ?</h3>
+      <p>Flam'Box, Crousty'Flam, Tex Mex à plusieurs — nos formules pensées pour caler une petite faim.</p>
+    </div>
+    <a href="bons-plans.html" class="btn btn--primary">Voir les bons plans</a>
+  </div>
+</section>
+
+<section class="infos" id="infos">
+  <div class="infos__grid">
+    <div class="infos__photo reveal">
+      <img src="assets/img/storefront.jpg" alt="Façade du restaurant La Flamme, 9 avenue de Montrapon à Besançon" loading="lazy">
+    </div>
+
+    <div class="infos__content reveal">
+      <p class="section-eyebrow">Nous trouver</p>
+      <h2 class="section-title">Sur place, à emporter <span class="script">ou livré</span></h2>
+
+      <div class="infos__block">
+        <h3>Adresse</h3>
+        <p>9 Avenue de Montrapon<br>25000 Besançon</p>
+      </div>
+
+      <div class="infos__block">
+        <h3>Horaires</h3>
+        <ul class="hours">
+          <li><span>Lun · Mar · Jeu · Ven</span><span>11h30–14h30 &amp; 18h–23h30</span></li>
+          <li><span>Samedi</span><span>12h–14h &amp; 18h–23h30</span></li>
+          <li><span>Dimanche</span><span>16h–23h</span></li>
+          <li><span>Mercredi</span><span>Fermé</span></li>
+        </ul>
+      </div>
+
+      <div class="infos__block">
+        <h3>Contact</h3>
+        <p><a href="tel:0952991480">09 52 99 14 80</a> · <a href="mailto:laflammerestaurant25@gmail.com">laflammerestaurant25@gmail.com</a></p>
+      </div>
+
+      <div class="infos__actions">
+        <a href="#" class="btn btn--primary">Commander sur Uber&nbsp;Eats</a>
+        <a href="#" class="btn btn--outline">Commander sur Deliveroo</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<div class="detail" id="detail" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
+  <div class="detail__scrim" id="detailScrim"></div>
+  <div class="detail__panel" id="detailPanel">
+    <button class="detail__close" id="detailClose" aria-label="Fermer">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+    <div class="detail__media">
+      <img id="detailImg" src="" alt="">
+    </div>
+    <div class="detail__body">
+      <p class="detail__eyebrow" id="detailEyebrow">La Flamme</p>
+      <h3 class="detail__title" id="detailTitle"></h3>
+      <p class="detail__desc" id="detailDesc"></p>
+      <div class="detail__footer">
+        <span class="detail__price" id="detailPrice"></span>
+        <button type="button" class="btn btn--primary" id="detailCta" data-add-item>Ajouter au panier</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="cart" id="cart" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="cartTitle">
+  <div class="cart__scrim" id="cartScrim"></div>
+  <div class="cart__panel">
+    <div class="cart__head">
+      <h2 class="cart__title" id="cartTitle">Votre panier</h2>
+      <button type="button" class="cart__close" id="cartClose" aria-label="Fermer le panier">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="cart__items" id="cartItems"></div>
+    <div class="cart__foot">
+      <div class="cart__total">
+        <span class="cart__total-label">Total</span>
+        <span class="cart__total-value" id="cartTotal">0€</span>
+      </div>
+      <div class="cart__actions">
+        <a href="#" class="btn btn--primary" id="cartWhatsapp" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12.04 2c-5.46 0-9.9 4.44-9.9 9.9 0 1.75.46 3.45 1.32 4.95L2 22l5.29-1.39a9.9 9.9 0 0 0 4.75 1.21h.01c5.46 0 9.9-4.44 9.9-9.9 0-2.64-1.03-5.13-2.9-6.99A9.82 9.82 0 0 0 12.04 2m0 1.67c2.29 0 4.44.89 6.06 2.51a8.52 8.52 0 0 1 2.5 6.06c0 4.72-3.84 8.56-8.56 8.56a8.5 8.5 0 0 1-4.32-1.18l-.31-.18-3.15.83.84-3.07-.2-.32a8.46 8.46 0 0 1-1.3-4.53c0-4.72 3.85-8.56 8.56-8.56"/></svg>
+          Commander sur WhatsApp
+        </a>
+        <a href="#" class="btn btn--outline" id="cartEmail">Commander par e-mail</a>
+      </div>
+      <p class="cart__hint">Le paiement se fait sur place, à emporter ou à la livraison — cette commande est une pré-réservation, confirmée par le restaurant.</p>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="footer__inner">
+    <div class="footer__brand">
+      <img src="assets/img/logo.png" alt="La Flamme">
+      <p>Pizza · Snacks · Plats<br>Authentique &amp; Gourmand</p>
+    </div>
+
+    <div class="footer__col">
+      <h4>Navigation</h4>
+      <a href="menu.html">Menu</a>
+      <a href="bons-plans.html">Bons plans</a>
+      <a href="index.html#infos">Infos &amp; horaires</a>
+    </div>
+
+    <div class="footer__col">
+      <h4>Suivez-nous</h4>
+      <a href="#">Instagram</a>
+      <a href="#">TikTok</a>
+      <a href="#">Facebook</a>
+      <a href="#">Snapchat</a>
+    </div>
+
+    <div class="footer__col">
+      <h4>Livraison</h4>
+      <a href="#">Uber Eats</a>
+      <a href="#">Deliveroo</a>
+    </div>
+  </div>
+  <div class="footer__bottom">
+    <span>© 2026 La Flamme Restaurant — Besançon</span>
+    <span>@la.flamme.besancon</span>
+  </div>
+</footer>
+
+<script src="assets/js/main.js"></script>
+</body>
+</html>
