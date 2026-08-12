@@ -873,7 +873,15 @@ body.detail-open { overflow: hidden; }
    sits above .hero__bg, below the hero content. Empty = the existing
    gradient/photo background shows through untouched (graceful fallback
    until an embed is wired in here). */
-.hero__embed { position: absolute; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
+.hero__embed {
+  position: absolute; inset: 0; z-index: -1; pointer-events: none; overflow: hidden;
+  /* Dampened pending a scene revision — see chat: the current Unicorn
+     Studio scene is too large/bright and overlaps the title and photo at
+     full opacity. Raise this back toward 1 once the scene itself is
+     recomposed to sit quietly at the edges (per the brief). */
+  opacity: .16;
+}
+.hero__embed-scene { width: 100%; height: 100%; }
 
 /* Native cross-document transitions between the 3 pages — a soft cross-fade
    by default, no JS. The nav keeps a stable identity across the swap

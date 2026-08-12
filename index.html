@@ -64,11 +64,13 @@
   <div class="hero__bg" aria-hidden="true"></div>
   <div class="hero__grain" aria-hidden="true"></div>
 
-  <!-- Reserved slot for a generative animated background (Unicorn Studio /
-       Spline export). Empty on purpose: paste the provided embed <script>
-       + element here once available — it will sit above .hero__bg and
-       below the content below without touching anything else. -->
-  <div class="hero__embed" id="heroEmbed" aria-hidden="true"></div>
+  <!-- Generative animated background (Unicorn Studio scene). Loaded and
+       initialized from main.js (initUnicornBackground) — the loader is
+       skipped entirely under prefers-reduced-motion, in which case this
+       stays empty and .hero__bg's static gradient shows through instead. -->
+  <div class="hero__embed" id="heroEmbed" aria-hidden="true">
+    <div class="hero__embed-scene" data-us-project="YPD5ACUwAGwZTbH9D3Wa"></div>
+  </div>
 
   <div class="hero__inner">
     <div class="hero__copy">

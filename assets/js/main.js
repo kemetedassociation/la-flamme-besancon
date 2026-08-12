@@ -247,6 +247,29 @@
     update();
   }
 
+  /* ---- 7b. Unicorn Studio hero background --------------------------------- */
+  // Loads the generative scene SDK only when it's actually going to be used:
+  // never under prefers-reduced-motion (a continuously animated WebGL scene
+  // is exactly the kind of ambient motion that preference exists to turn
+  // off — the static gradient in .hero__bg is the fallback, already always
+  // present underneath). No scroll/viewport gate is needed beyond that: the
+  // Hero is always the first thing in the viewport on load.
+  function initUnicornBackground() {
+    if (prefersReducedMotion) return;
+    const scene = document.querySelector(".hero__embed [data-us-project]");
+    if (!scene) return;
+
+    if (window.UnicornStudio && window.UnicornStudio.init) {
+      window.UnicornStudio.init();
+      return;
+    }
+    window.UnicornStudio = { isInitialized: false };
+    const script = document.createElement("script");
+    script.src = "https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v2.2.8/dist/unicornStudio.umd.js";
+    script.onload = () => window.UnicornStudio.init();
+    document.head.appendChild(script);
+  }
+
   /* ---- 8. Ken Burns — infos photo, only while visible --------------------- */
   function initKenBurns() {
     const img = document.querySelector(".infos__photo img");
@@ -1031,6 +1054,7 @@
     initDetailOverlay();
     initReveal();
     initHeroScrollDepth();
+    initUnicornBackground();
     initKenBurns();
     initCursor();
     playHeroEntrance();
