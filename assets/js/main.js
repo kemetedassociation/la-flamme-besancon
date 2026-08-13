@@ -225,6 +225,21 @@
     items.forEach((el) => io.observe(el));
   }
 
+  /* ---- 6b. Hero video — respects reduced-motion ---------------------------- */
+  // The <video> autoplays via its HTML attributes for everyone by default
+  // (muted satisfies every browser's autoplay policy). Under
+  // prefers-reduced-motion the only adjustment needed is to not actually
+  // play it — the `poster` frame (the previous static photo) already
+  // covers that case with zero extra markup.
+  function initHeroVideo() {
+    const video = document.querySelector(".hero__visual-video");
+    if (!video) return;
+    if (prefersReducedMotion) {
+      video.pause();
+      video.removeAttribute("autoplay");
+    }
+  }
+
   /* ---- 7. Hero scroll depth ----------------------------------------------- */
   function initHeroScrollDepth() {
     if (prefersReducedMotion) return;
@@ -1053,6 +1068,7 @@
     initCart();
     initDetailOverlay();
     initReveal();
+    initHeroVideo();
     initHeroScrollDepth();
     initUnicornBackground();
     initKenBurns();

@@ -395,7 +395,8 @@ h1, h2, h3, h4, p { margin: 0; }
      1:1 scroll scrubbing). Desktop only; see the matchMedia gate in JS. */
   will-change: transform;
 }
-.hero__visual-frame img { width: 100%; height: 100%; object-fit: cover; object-position: center 40%; }
+.hero__visual-frame img,
+.hero__visual-frame video { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center 40%; }
 
 .hero__visual-tag {
   position: absolute;
