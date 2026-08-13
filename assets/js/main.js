@@ -59,6 +59,40 @@
   const EASE_OUT = "cubic-bezier(.16,1,.3,1)";
   const IMG_BASE = "assets/img/";
 
+  /* ---- Touch swipe — shared by tabs, cart drawer, detail overlay ---------- */
+  // A deliberately small helper (no gesture library): measures one finger's
+  // travel between touchstart and touchend, fires a callback if it crossed
+  // the threshold in a direction that was actually offered. Ignores
+  // predominantly-vertical gestures for left/right (and vice versa) so it
+  // never fights normal page scrolling.
+  function onSwipe(el, { left, right, up, down, threshold = 48 } = {}) {
+    if (!el) return;
+    let startX = 0;
+    let startY = 0;
+    let tracking = false;
+
+    el.addEventListener("touchstart", (e) => {
+      if (e.touches.length !== 1) return;
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+      tracking = true;
+    }, { passive: true });
+
+    el.addEventListener("touchend", (e) => {
+      if (!tracking) return;
+      tracking = false;
+      const dx = e.changedTouches[0].clientX - startX;
+      const dy = e.changedTouches[0].clientY - startY;
+      if (Math.abs(dx) > Math.abs(dy)) {
+        if (dx <= -threshold && left) left();
+        else if (dx >= threshold && right) right();
+      } else {
+        if (dy <= -threshold && up) up();
+        else if (dy >= threshold && down) down();
+      }
+    }, { passive: true });
+  }
+
   /* ---- 2. Hero entrance -------------------------------------------------- */
   function playHeroEntrance() {
     const hero = document.querySelector(".hero");
@@ -185,6 +219,20 @@
 
     buttons.forEach((btn) => btn.addEventListener("click", () => activate(btn)));
 
+    // Swipe left/right on the panels themselves to move between categories —
+    // the natural way to flip through a menu on a phone, not just tapping
+    // the (sometimes off-screen) tab pill.
+    onSwipe(document.getElementById("tabPanels"), {
+      left: () => {
+        const i = buttons.findIndex((b) => b.classList.contains("is-active"));
+        if (i > -1 && i < buttons.length - 1) activate(buttons[i + 1]);
+      },
+      right: () => {
+        const i = buttons.findIndex((b) => b.classList.contains("is-active"));
+        if (i > 0) activate(buttons[i - 1]);
+      },
+    });
+
     // Deep-link support: menu.html#pizzas activates the Pizzas tab on load
     // (used by the homepage's category shortcuts).
     const hashTarget = location.hash.replace("#", "");
@@ -271,6 +319,55 @@
     }, { passive: true });
     window.addEventListener("resize", () => { if (!ticking) { requestAnimationFrame(update); ticking = true; } });
     update();
+  }
+
+  /* ---- 7b. Hero gyroscope parallax — phones only --------------------------- */
+  // Tilts .hero__visual-frame a few pixels with the device's orientation —
+  // a different element from the one the scroll-zoom animates
+  // (.hero__visual-video) and from the one the entrance animates
+  // (.hero__visual), so none of the three ever fight over the same inline
+  // `transform`. Purely ambient/non-essential, so it fails silent and
+  // never blocks anything if the sensor or permission isn't available.
+  function initHeroGyroscope() {
+    if (prefersReducedMotion) return;
+    if (!window.matchMedia("(hover: none), (pointer: coarse)").matches) return;
+    if (typeof window.DeviceOrientationEvent === "undefined") return;
+
+    const frame = document.querySelector(".hero__visual-frame");
+    if (!frame) return;
+
+    const MAX_TILT = 10; // px of travel at the edges of a comfortable hold-angle range
+    let started = false;
+
+    function onOrientation(e) {
+      if (e.beta === null || e.gamma === null) return;
+      if (!started) {
+        started = true;
+        frame.style.transition = `transform ${MS.micro}ms ${EASE_OUT}`;
+      }
+      const x = Math.max(-1, Math.min(1, e.gamma / 20));
+      const y = Math.max(-1, Math.min(1, (e.beta - 45) / 20)); // ~45° ≈ a phone held up to look at
+      frame.style.transform = `translate(${(x * MAX_TILT).toFixed(1)}px, ${(y * MAX_TILT).toFixed(1)}px)`;
+    }
+
+    function start() {
+      window.addEventListener("deviceorientation", onOrientation);
+    }
+
+    const DOE = window.DeviceOrientationEvent;
+    if (typeof DOE.requestPermission === "function") {
+      // iOS 13+ requires this to be requested from inside a real user
+      // gesture — piggyback on the visitor's first tap anywhere rather
+      // than showing a dedicated permission prompt for what's a purely
+      // decorative effect.
+      const grant = () => {
+        document.removeEventListener("touchend", grant);
+        DOE.requestPermission().then((state) => { if (state === "granted") start(); }).catch(() => {});
+      };
+      document.addEventListener("touchend", grant, { once: true });
+    } else {
+      start();
+    }
   }
 
   /* ---- 7b. Unicorn Studio hero background --------------------------------- */
@@ -760,6 +857,10 @@
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape" && detail.classList.contains("is-open")) close();
     });
+    // Swipe down to dismiss — the standard mobile-sheet gesture; only acts
+    // while actually open, and only on the panel itself so it doesn't
+    // steal vertical swipes meant for scrolling the description text.
+    onSwipe(panel, { down: () => { if (detail.classList.contains("is-open")) close(); } });
 
     document.addEventListener("keydown", (e) => {
       if (e.key !== "Tab" || !detail.classList.contains("is-open")) return;
@@ -966,6 +1067,10 @@
     }
 
     cartBtn.addEventListener("click", openCart);
+    // Swipe right to dismiss — matches the direction the drawer itself
+    // slides out toward.
+    const cartPanel = cartEl.querySelector(".cart__panel");
+    onSwipe(cartPanel, { right: () => { if (cartEl.classList.contains("is-open")) closeCart(); } });
     if (cartClose) cartClose.addEventListener("click", closeCart);
     if (cartScrim) cartScrim.addEventListener("click", closeCart);
     document.addEventListener("keydown", (e) => {
@@ -1081,6 +1186,7 @@
     initReveal();
     initHeroVideo();
     initHeroScrollDepth();
+    initHeroGyroscope();
     initUnicornBackground();
     initKenBurns();
     initCursor();

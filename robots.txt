@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://kemetedassociation.github.io/la-flamme-besancon/sitemap.xml

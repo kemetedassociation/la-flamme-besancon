@@ -19,17 +19,20 @@
    ========================================================================== */
 
 :root {
-  /* ---- Color tokens (sampled from the La Flamme logo & menu boards) ---- */
-  --ink: #15120e;
-  --surface: #1d1913;
-  --surface-2: #26201a;
-  --surface-3: #322a21;
-  --line: rgba(245, 239, 225, .10);
-  --line-strong: rgba(245, 239, 225, .18);
+  /* ---- Color tokens (sampled from the La Flamme logo & menu boards) ----
+     Raised a step lighter across the board (was near-black) per direct
+     feedback that the site read as too dark — same warm-brown hue, just
+     not as deep, and secondary text brightened to match. */
+  --ink: #2a251e;
+  --surface: #342e25;
+  --surface-2: #413a2e;
+  --surface-3: #4f4738;
+  --line: rgba(245, 239, 225, .14);
+  --line-strong: rgba(245, 239, 225, .24);
 
-  --cream: #f6efe1;
-  --cream-dim: #cdc3ac;
-  --cream-mute: #9c927e;
+  --cream: #fbf7ef;
+  --cream-dim: #ddd3bd;
+  --cream-mute: #b3a892;
 
   --green-900: #1c2a1c;
   --green-700: #2b3e2b;
@@ -683,6 +686,67 @@ h1, h2, h3, h4, p { margin: 0; }
   .upsell-toast { left: 1rem; right: 1rem; bottom: 1rem; width: auto; }
 }
 
+/* ==========================================================================
+   FAQ — native <details>/<summary>: free keyboard support and screen-reader
+   semantics, styled to match the rest of the system.
+   ========================================================================== */
+.faq { max-width: 780px; margin: 0 auto; padding: 2rem 1.5rem 6rem; }
+.faq__item { border-bottom: 1px solid var(--line); }
+.faq__item summary {
+  list-style: none; cursor: pointer; padding: 1.3rem .2rem;
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  font-weight: 700; color: var(--cream); font-size: 1.02rem;
+}
+.faq__item summary::-webkit-details-marker { display: none; }
+.faq__item summary::after {
+  content: "+"; font-size: 1.5rem; line-height: 1; color: var(--terracotta-light); flex-shrink: 0;
+  transition: transform var(--dur-ui) var(--ease-out);
+}
+.faq__item[open] summary::after { transform: rotate(45deg); }
+.faq__item p { color: var(--cream-dim); padding: 0 .2rem 1.4rem; line-height: 1.65; max-width: 60ch; }
+
+/* ==========================================================================
+   BLOG
+   ========================================================================== */
+.blog-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.6rem; max-width: 1240px; margin: 0 auto; padding: 1rem 1.5rem 6rem; }
+.blog-card {
+  display: flex; flex-direction: column;
+  background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--radius-m);
+  overflow: hidden;
+  transition: transform var(--dur-ui) var(--ease-out), box-shadow var(--dur-ui) var(--ease-out), border-color var(--dur-ui) var(--ease-standard);
+}
+.blog-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-2); border-color: var(--line-strong); }
+.blog-card__media { aspect-ratio: 16/10; overflow: hidden; background: var(--surface-3); }
+.blog-card__media img { width: 100%; height: 100%; object-fit: cover; transition: transform var(--dur-ui-2) var(--ease-out); }
+.blog-card:hover .blog-card__media img { transform: scale(1.05); }
+.blog-card__body { padding: 1.3rem 1.4rem 1.5rem; display: flex; flex-direction: column; gap: .6rem; }
+.blog-card__meta { font-size: .74rem; letter-spacing: .08em; text-transform: uppercase; color: var(--terracotta-light); font-weight: 700; }
+.blog-card__title { font-family: 'Archivo Black', sans-serif; font-size: 1.15rem; color: var(--cream); line-height: 1.25; }
+.blog-card__excerpt { color: var(--cream-dim); font-size: .88rem; line-height: 1.55; }
+.blog-card__link { margin-top: .3rem; font-size: .8rem; font-weight: 700; color: var(--terracotta-light); }
+
+.article { max-width: 720px; margin: 0 auto; padding: 2rem 1.5rem 6rem; }
+.article__meta { font-size: .78rem; letter-spacing: .1em; text-transform: uppercase; color: var(--terracotta-light); font-weight: 700; margin-bottom: .8rem; }
+.article__lead { font-size: 1.08rem; color: var(--cream-dim); line-height: 1.65; margin-bottom: 2rem; }
+.article h2 { font-family: 'Archivo Black', sans-serif; font-size: 1.4rem; color: var(--cream); margin: 2.2rem 0 1rem; }
+.article p { color: var(--cream-dim); font-size: 1rem; line-height: 1.75; margin-bottom: 1.2rem; }
+.article ul { margin: 0 0 1.2rem; padding-left: 1.3rem; color: var(--cream-dim); line-height: 1.75; }
+.article li { margin-bottom: .4rem; }
+.article strong { color: var(--cream); }
+.article__cta {
+  margin-top: 2.5rem; padding: 1.6rem 1.8rem; border-radius: var(--radius-m);
+  background: var(--surface-2); border: 1px solid var(--line-strong);
+  display: flex; align-items: center; justify-content: space-between; gap: 1.2rem; flex-wrap: wrap;
+}
+.article__cta p { margin: 0; color: var(--cream); font-weight: 700; }
+
+@media (max-width: 980px) {
+  .blog-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 600px) {
+  .blog-grid { grid-template-columns: 1fr; }
+}
+
 /* ---------------------------------------------------------------------- */
 /* CARDS — bestsellers & desserts                                        */
 /* ---------------------------------------------------------------------- */
@@ -918,6 +982,20 @@ body.detail-open { overflow: hidden; }
   animation-duration: var(--dur-ui-2);
   animation-timing-function: var(--ease-out);
 }
+
+/* The logo gets its own named group nested inside main-nav's — a small
+   branded flourish (settle + fade in) plays on it specifically every time
+   a page finishes arriving, so the transition reads as "La Flamme
+   acknowledging you've arrived" rather than a silent, generic swap. */
+.nav__logo { view-transition-name: brand-logo; }
+::view-transition-new(brand-logo) {
+  animation: brandLogoIn var(--dur-ui) var(--ease-out);
+}
+@keyframes brandLogoIn {
+  from { transform: scale(.8) rotate(-6deg); opacity: .5; }
+  to   { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   @view-transition { navigation: none; }
 }
