@@ -240,25 +240,36 @@
     }
   }
 
-  /* ---- 7. Hero scroll depth ----------------------------------------------- */
+  /* ---- 7. Hero scroll depth — pinned zoom into the video's logo ------------ */
+  // Real scrollytelling per motion-system.md §15.2 (pinned room), not just
+  // a passive scroll-linked value: .hero-room holds the Hero in place
+  // (position: sticky, set in CSS) for an extra stretch of scroll while
+  // this drives the video's scale from 1 toward the logo. The gate below
+  // mirrors the CSS media query that gives .hero-room its extra height —
+  // if the CSS never added that scroll distance, this must never treat
+  // scroll position as if it did (matching §15.6/§15.7: mobile/touch and
+  // reduced-motion get zero pinning, not a shorter version of it).
   function initHeroScrollDepth() {
     if (prefersReducedMotion) return;
-    if (window.matchMedia("(max-width: 768px), (hover: none)").matches) return;
+    if (!window.matchMedia("(min-width: 769px) and (hover: hover)").matches) return;
 
-    const hero = document.querySelector(".hero");
-    const frame = document.querySelector(".hero__visual-frame");
-    if (!hero || !frame) return;
+    const room = document.getElementById("heroRoom");
+    const video = document.querySelector(".hero__visual-video");
+    if (!room || !video) return;
 
     let ticking = false;
     const update = () => {
-      const heroHeight = hero.offsetHeight || window.innerHeight;
-      const t = Math.min(1, Math.max(0, window.scrollY / heroHeight));
-      frame.style.transform = `translateY(${(t * -26).toFixed(1)}px) scale(${(1 - t * 0.05).toFixed(3)})`;
+      const scrollable = room.offsetHeight - window.innerHeight;
+      const t = scrollable > 0
+        ? Math.min(1, Math.max(0, (window.scrollY - room.offsetTop) / scrollable))
+        : 0;
+      video.style.transform = `scale(${(1 + t * 0.5).toFixed(3)})`;
       ticking = false;
     };
     window.addEventListener("scroll", () => {
       if (!ticking) { requestAnimationFrame(update); ticking = true; }
     }, { passive: true });
+    window.addEventListener("resize", () => { if (!ticking) { requestAnimationFrame(update); ticking = true; } });
     update();
   }
 

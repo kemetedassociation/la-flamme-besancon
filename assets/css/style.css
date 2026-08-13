@@ -293,12 +293,26 @@ h1, h2, h3, h4, p { margin: 0; }
 /* ---------------------------------------------------------------------- */
 /* HERO                                                                    */
 /* ---------------------------------------------------------------------- */
+/* Pinned scroll room — desktop/pointer-fine only. .hero-room is taller
+   than the viewport; .hero sticks to the top for that extra distance
+   while initHeroScrollDepth() (main.js) drives the video's zoom from
+   scroll position. Collapses to plain flow everywhere motion-system.md
+   §15.6/§15.7 requires it: mobile/touch and prefers-reduced-motion never
+   get the added scroll distance, not just a shorter version of it. */
+.hero-room { position: relative; }
 .hero {
   position: relative;
   min-height: 100svh;
   display: flex; flex-direction: column; justify-content: center;
   padding: 7.5rem 1.5rem 5rem;
   overflow: hidden;
+}
+/* All three conditions in one query, deliberately — this isn't "shorten
+   the effect" for any of them, it's "don't add the extra scroll distance
+   at all" (no-preference / hover / min-width all have to hold). */
+@media (min-width: 769px) and (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .hero-room { height: 180vh; }
+  .hero { position: sticky; top: 0; }
 }
 .hero__bg {
   position: absolute; inset: 0; z-index: -2;
@@ -385,18 +399,24 @@ h1, h2, h3, h4, p { margin: 0; }
 .hero__visual { position: relative; }
 .hero__visual-frame {
   border-radius: var(--radius-l);
+  /* Clips the video's scroll-driven zoom to the frame's rounded corners —
+     the scale-up in initHeroScrollDepth() only reads as a "push in" if
+     the overflow can't escape this box. */
   overflow: hidden;
   aspect-ratio: 5/4;
   box-shadow: var(--shadow-3);
   border: 1px solid var(--line);
-  /* Transform is written per-frame by initHeroScrollDepth() (main.js) as the
-     user scrolls the hero out of view — a recede/depth cue, not a state
-     transition, so intentionally no `transition` here (would fight the
-     1:1 scroll scrubbing). Desktop only; see the matchMedia gate in JS. */
-  will-change: transform;
 }
 .hero__visual-frame img,
 .hero__visual-frame video { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center 40%; }
+.hero__visual-video {
+  /* Scroll-scrubbed zoom (main.js initHeroScrollDepth) scales from this
+     point — roughly where the restaurant's logo sits in the source video —
+     so scrolling reads as pushing in toward the logo, not a generic
+     center-zoom. No CSS transition: it must track the scroll 1:1. */
+  transform-origin: 50% 24%;
+  will-change: transform;
+}
 
 .hero__visual-tag {
   position: absolute;
