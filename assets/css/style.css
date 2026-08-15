@@ -747,6 +747,63 @@ h1, h2, h3, h4, p { margin: 0; }
   .blog-grid { grid-template-columns: 1fr; }
 }
 
+/* ==========================================================================
+   COMPTE / STAFF — auth forms, dashboard, points ledger
+   ========================================================================== */
+.auth-shell { max-width: 420px; margin: 0 auto; padding: 2rem 1.5rem 6rem; }
+.auth-card {
+  background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--radius-l);
+  padding: 2rem 1.8rem; display: flex; flex-direction: column; gap: 1.1rem;
+}
+.auth-card h2 { font-family: 'Archivo Black', sans-serif; font-size: 1.3rem; color: var(--cream); }
+.field { display: flex; flex-direction: column; gap: .4rem; }
+.field label { font-size: .8rem; font-weight: 700; color: var(--cream-dim); }
+.field input {
+  background: var(--surface-3); border: 1px solid var(--line-strong); border-radius: var(--radius-s);
+  padding: .8em 1em; color: var(--cream); font: inherit; font-size: .95rem;
+  transition: border-color var(--dur-micro) var(--ease-standard);
+}
+.field input:focus { border-color: var(--terracotta-light); outline: none; }
+.auth-toggle { font-size: .85rem; color: var(--cream-mute); text-align: center; }
+.auth-toggle button { color: var(--terracotta-light); font-weight: 700; text-decoration: underline; text-underline-offset: 2px; }
+.auth-error {
+  font-size: .82rem; color: var(--red); background: rgba(212,51,31,.12); border: 1px solid rgba(212,51,31,.3);
+  border-radius: var(--radius-s); padding: .7em .9em; display: none;
+}
+.auth-error.is-visible { display: block; }
+.auth-success { font-size: .85rem; color: var(--green-300); }
+
+.account-dashboard { max-width: 640px; margin: 0 auto; padding: 2rem 1.5rem 6rem; display: flex; flex-direction: column; gap: 1.6rem; }
+.points-card {
+  background: linear-gradient(135deg, var(--terracotta), var(--terracotta-light));
+  border-radius: var(--radius-l); padding: 2rem; color: var(--ink);
+  display: flex; flex-direction: column; gap: .3rem;
+}
+.points-card__label { font-size: .8rem; text-transform: uppercase; letter-spacing: .1em; font-weight: 700; opacity: .75; }
+.points-card__value { font-family: 'Archivo Black', sans-serif; font-size: 3rem; line-height: 1; }
+.points-card__hint { font-size: .85rem; opacity: .8; margin-top: .4rem; }
+
+.referral-card { background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--radius-m); padding: 1.6rem 1.8rem; display: flex; flex-direction: column; gap: .8rem; }
+.referral-card h3 { font-family: 'Archivo Black', sans-serif; font-size: 1.05rem; color: var(--cream); }
+.referral-card p { color: var(--cream-dim); font-size: .92rem; line-height: 1.6; }
+.referral-code { display: flex; align-items: center; gap: .8rem; background: var(--surface-3); border-radius: var(--radius-s); padding: .8em 1.1em; }
+.referral-code span { font-family: 'Archivo Black', sans-serif; letter-spacing: .1em; font-size: 1.1rem; color: var(--terracotta-light); flex: 1; }
+
+.tx-list { display: flex; flex-direction: column; }
+.tx-row { display: flex; justify-content: space-between; align-items: baseline; padding: .8rem 0; border-bottom: 1px dashed var(--line); font-size: .9rem; }
+.tx-row__reason { color: var(--cream-dim); }
+.tx-row__date { color: var(--cream-mute); font-size: .76rem; display: block; margin-top: .1rem; }
+.tx-row__amount { font-weight: 800; color: var(--terracotta-light); font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+.staff-search { display: flex; gap: .7rem; flex-wrap: wrap; }
+.staff-search .field { flex: 1; min-width: 220px; }
+.staff-result { background: var(--surface-2); border: 1px solid var(--line-strong); border-radius: var(--radius-m); padding: 1.4rem 1.6rem; margin-top: 1.2rem; display: none; flex-direction: column; gap: 1rem; }
+.staff-result.is-visible { display: flex; }
+.staff-result__row { display: flex; justify-content: space-between; gap: 1rem; font-size: .92rem; color: var(--cream-dim); }
+.staff-result__row strong { color: var(--cream); }
+.staff-credit { display: flex; gap: .8rem; align-items: flex-end; flex-wrap: wrap; }
+.staff-credit .field { flex: 1; min-width: 160px; }
+
 /* ---------------------------------------------------------------------- */
 /* CARDS — bestsellers & desserts                                        */
 /* ---------------------------------------------------------------------- */

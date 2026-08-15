@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Espace personnel — La Flamme</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="assets/img/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Manrope:wght@400;500;600;700;800&family=Archivo+Black&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<header class="nav" id="nav" data-state="scrolled">
+  <div class="nav__inner">
+    <a href="index.html" class="nav__brand">
+      <img src="assets/img/logo.png" alt="La Flamme" class="nav__logo">
+      <span class="nav__brand-text">La Flamme — Staff</span>
+    </a>
+  </div>
+</header>
+
+<main>
+<div class="page-header">
+  <p class="section-eyebrow">Réservé au personnel</p>
+  <h1 class="section-title">Créditer des <span class="script">points fidélité</span></h1>
+  <p class="page-header__lead">Le client vous donne son e-mail ou son code fidélité à la confirmation de commande WhatsApp — cherchez-le ici et créditez le montant réglé.</p>
+</div>
+
+<section id="authSection" class="auth-shell">
+  <div class="auth-card">
+    <p class="auth-error" id="authError"></p>
+    <form id="loginForm">
+      <h2>Connexion personnel</h2>
+      <div class="field">
+        <label for="loginEmail">E-mail</label>
+        <input type="email" id="loginEmail" required autocomplete="email">
+      </div>
+      <div class="field">
+        <label for="loginPassword">Mot de passe</label>
+        <input type="password" id="loginPassword" required autocomplete="current-password">
+      </div>
+      <button type="submit" class="btn btn--primary" style="width:100%; margin-top:.4rem;">Se connecter</button>
+    </form>
+  </div>
+</section>
+
+<section id="deniedSection" class="auth-shell" hidden>
+  <div class="auth-card">
+    <h2>Accès réservé</h2>
+    <p style="color:var(--cream-dim); font-size:.92rem;">Ce compte n'a pas les droits personnel. Contactez le gérant pour activer l'accès depuis Supabase (colonne <code>is_staff</code>).</p>
+  </div>
+</section>
+
+<section id="staffSection" class="account-dashboard" hidden>
+  <div class="referral-card">
+    <h3>Rechercher un client</h3>
+    <form id="searchForm" class="staff-search">
+      <div class="field">
+        <label for="searchQuery">E-mail ou code fidélité</label>
+        <input type="text" id="searchQuery" placeholder="client@exemple.com ou A1B2C3" required>
+      </div>
+      <button type="submit" class="btn btn--outline">Chercher</button>
+    </form>
+
+    <div class="staff-result" id="staffResult">
+      <div class="staff-result__row"><span>Client</span><strong id="resultEmail"></strong></div>
+      <div class="staff-result__row"><span>Code fidélité</span><strong id="resultCode"></strong></div>
+      <div class="staff-result__row"><span>Solde actuel</span><strong id="resultPoints"></strong></div>
+
+      <form id="creditForm" class="staff-credit">
+        <div class="field">
+          <label for="orderAmount">Montant réglé (€)</label>
+          <input type="number" id="orderAmount" min="0" step="0.01" required>
+        </div>
+        <button type="submit" class="btn btn--primary">Créditer les points</button>
+      </form>
+      <p id="creditMsg" style="font-size:.85rem; color:var(--green-300);"></p>
+    </div>
+  </div>
+</section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="assets/js/supabase-client.js"></script>
+<script src="assets/js/staff.js"></script>
+</body>
+</html>

@@ -1,0 +1,129 @@
+-- ============================================================================
+-- LA FLAMME — Schéma fidélité / comptes clients
+-- ----------------------------------------------------------------------------
+-- À exécuter une seule fois dans Supabase : Dashboard → SQL Editor → New query
+-- → coller ce fichier en entier → Run.
+--
+-- Principe anti-triche : un client ne peut jamais modifier ses propres points
+-- ni son statut. Seul un compte marqué is_staff peut créditer des points, et
+-- toujours via une ligne dans point_transactions (jamais en écrivant
+-- directement profiles.points) — ça garde un historique complet et vérifiable
+-- de qui a crédité quoi, et quand.
+-- ============================================================================
+
+-- ---- profils : un par utilisateur inscrit, créé automatiquement ------------
+create table public.profiles (
+  id uuid primary key references auth.users(id) on delete cascade,
+  email text,
+  full_name text,
+  referral_code text unique not null,
+  referred_by uuid references public.profiles(id),
+  points integer not null default 0,
+  is_staff boolean not null default false,
+  created_at timestamptz not null default now()
+);
+
+alter table public.profiles enable row level security;
+
+create policy "profiles_select_own"
+  on public.profiles for select
+  using (auth.uid() = id);
+
+create policy "profiles_select_staff"
+  on public.profiles for select
+  using (exists (select 1 from public.profiles p where p.id = auth.uid() and p.is_staff));
+
+create policy "profiles_update_own"
+  on public.profiles for update
+  using (auth.uid() = id)
+  with check (auth.uid() = id);
+
+-- Bloque la modification de points/is_staff/referral_code par le client
+-- lui-même, même s'il passe par la policy update ci-dessus — seule une
+-- fonction staff (voir apply_point_transaction plus bas) peut y toucher.
+create or replace function public.protect_profile_fields()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if not coalesce((select is_staff from public.profiles where id = auth.uid()), false) then
+    new.points := old.points;
+    new.is_staff := old.is_staff;
+    new.referral_code := old.referral_code;
+  end if;
+  return new;
+end;
+$$;
+
+create trigger protect_profile_fields_trigger
+  before update on public.profiles
+  for each row execute function public.protect_profile_fields();
+
+-- Crée le profil + un code de parrainage à chaque inscription
+create or replace function public.handle_new_user()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  insert into public.profiles (id, email, referral_code)
+  values (new.id, new.email, upper(substr(md5(random()::text || new.id::text), 1, 6)));
+  return new;
+end;
+$$;
+
+create trigger on_auth_user_created
+  after insert on auth.users
+  for each row execute function public.handle_new_user();
+
+-- ---- transactions de points : registre, écriture réservée au staff --------
+create table public.point_transactions (
+  id bigint generated always as identity primary key,
+  profile_id uuid not null references public.profiles(id),
+  amount integer not null,
+  reason text not null,
+  order_amount_cents integer,
+  credited_by uuid references public.profiles(id),
+  created_at timestamptz not null default now()
+);
+
+alter table public.point_transactions enable row level security;
+
+create policy "transactions_select_own"
+  on public.point_transactions for select
+  using (auth.uid() = profile_id);
+
+create policy "transactions_select_staff"
+  on public.point_transactions for select
+  using (exists (select 1 from public.profiles p where p.id = auth.uid() and p.is_staff));
+
+create policy "transactions_insert_staff_only"
+  on public.point_transactions for insert
+  with check (exists (select 1 from public.profiles p where p.id = auth.uid() and p.is_staff));
+
+-- Répercute chaque transaction sur le solde du profil concerné
+create or replace function public.apply_point_transaction()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  update public.profiles set points = points + new.amount where id = new.profile_id;
+  return new;
+end;
+$$;
+
+create trigger apply_point_transaction_trigger
+  after insert on public.point_transactions
+  for each row execute function public.apply_point_transaction();
+
+-- ============================================================================
+-- Étape suivante (à faire une seule fois, à la main, dans Supabase) :
+-- 1. Inscrivez-vous sur compte.html avec l'e-mail du restaurant.
+-- 2. Dashboard → Table Editor → profiles → trouvez cette ligne → passez
+--    is_staff à true. C'est ce qui débloque l'accès à staff.html.
+-- ============================================================================

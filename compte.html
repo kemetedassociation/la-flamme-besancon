@@ -3,33 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Livraison à Besançon : Uber Eats, Deliveroo ou commande directe ? — La Flamme</title>
-<meta name="description" content="Trois façons de recevoir votre commande La Flamme à Besançon : Uber Eats, Deliveroo ou commande directe sur le site. Différences, délais, et comment choisir.">
-<link rel="canonical" href="https://kemetedassociation.github.io/la-flamme-besancon/blog-livraison-besancon-guide.html">
-<meta property="og:type" content="article">
-<meta property="og:site_name" content="La Flamme">
-<meta property="og:title" content="Livraison à Besançon : Uber Eats, Deliveroo ou commande directe ?">
-<meta property="og:description" content="Trois façons de recevoir votre commande La Flamme, leurs différences, et laquelle choisir.">
-<meta property="og:image" content="https://kemetedassociation.github.io/la-flamme-besancon/assets/img/flambox.jpg">
-<meta property="og:url" content="https://kemetedassociation.github.io/la-flamme-besancon/blog-livraison-besancon-guide.html">
-<meta property="og:locale" content="fr_FR">
-<meta name="twitter:card" content="summary_large_image">
+<title>Mon compte — La Flamme Besançon</title>
+<meta name="description" content="Votre espace fidélité La Flamme : points cumulés, code de parrainage et historique.">
+<link rel="canonical" href="https://kemetedassociation.github.io/la-flamme-besancon/compte.html">
+<meta name="robots" content="noindex">
 <link rel="icon" href="assets/img/logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Manrope:wght@400;500;600;700;800&family=Archivo+Black&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/style.css">
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Article",
-  "headline": "Livraison à Besançon : Uber Eats, Deliveroo ou commande directe ?",
-  "image": "https://kemetedassociation.github.io/la-flamme-besancon/assets/img/flambox.jpg",
-  "author": { "@type": "Organization", "name": "La Flamme" },
-  "publisher": { "@type": "Organization", "name": "La Flamme", "logo": { "@type": "ImageObject", "url": "https://kemetedassociation.github.io/la-flamme-besancon/assets/img/logo.png" } },
-  "mainEntityOfPage": "https://kemetedassociation.github.io/la-flamme-besancon/blog-livraison-besancon-guide.html"
-}
-</script>
 </head>
 <body>
 
@@ -75,45 +57,80 @@
     <a href="index.html#infos" data-nav-link data-mobile-index="3">Infos &amp; horaires</a>
     <a href="tel:0952991480" data-mobile-index="4" class="mobile-menu__cta">Appeler le restaurant</a>
   </nav>
-  <div class="mobile-menu__socials" data-mobile-index="4">
-    <span>@la.flamme.besancon</span>
-  </div>
 </div>
 
 <main id="contenu">
 
-<div class="page-header reveal" style="padding-bottom:0;">
-  <p class="section-eyebrow">Guide pratique</p>
-  <h1 class="section-title">Livraison à Besançon : <span class="script">quel mode choisir</span></h1>
+<div class="page-header reveal">
+  <p class="section-eyebrow">Fidélité</p>
+  <h1 class="section-title">Mon <span class="script">compte</span></h1>
+  <p class="page-header__lead">Cumulez des points à chaque commande et parrainez vos proches.</p>
 </div>
 
-<article class="article reveal">
-  <p class="article__meta">La Flamme · Besançon</p>
-  <p class="article__lead">Uber Eats, Deliveroo, ou directement sur notre site : trois façons de commander chez La Flamme, chacune avec ses avantages. Voici comment choisir selon votre situation.</p>
+<section id="authSection" class="auth-shell reveal">
+  <div class="auth-card">
+    <p class="auth-error" id="authError"></p>
 
-  <h2>Uber Eats et Deliveroo : le confort du suivi en temps réel</h2>
-  <p>Les plateformes de livraison restent la solution la plus simple si vous voulez suivre votre commande en direct sur une carte, payer par carte dans l'application, et ne pas avoir à vous déplacer du tout. Elles prennent une commission sur chaque commande, ce qui explique pourquoi les prix y sont parfois légèrement supérieurs à ceux affichés en salle.</p>
+    <form id="loginForm">
+      <h2>Se connecter</h2>
+      <div class="field">
+        <label for="loginEmail">E-mail</label>
+        <input type="email" id="loginEmail" required autocomplete="email">
+      </div>
+      <div class="field">
+        <label for="loginPassword">Mot de passe</label>
+        <input type="password" id="loginPassword" required autocomplete="current-password">
+      </div>
+      <button type="submit" class="btn btn--primary" style="width:100%; margin-top:.4rem;">Se connecter</button>
+      <p class="auth-toggle">Pas encore de compte ? <button type="button" id="showSignup">Inscrivez-vous</button></p>
+    </form>
 
-  <h2>La commande directe sur notre site : plus rapide à préparer, souvent moins chère</h2>
-  <p>Depuis <a href="menu.html">notre carte</a> ou nos <a href="bons-plans.html">bons plans</a>, vous pouvez composer votre commande, l'ajouter au panier, puis l'envoyer directement au restaurant par WhatsApp ou e-mail. Le restaurant commence à la préparer dès réception, et le paiement se fait simplement sur place, à emporter ou à la livraison — sans commission de plateforme qui vient s'ajouter à l'addition.</p>
-  <p>C'est la solution la plus adaptée si vous passez récupérer votre commande vous-même, ou si vous préférez un contact direct avec le restaurant plutôt qu'un intermédiaire.</p>
+    <form id="signupForm" hidden>
+      <h2>Créer un compte</h2>
+      <div class="field">
+        <label for="signupEmail">E-mail</label>
+        <input type="email" id="signupEmail" required autocomplete="email">
+      </div>
+      <div class="field">
+        <label for="signupPassword">Mot de passe</label>
+        <input type="password" id="signupPassword" required minlength="6" autocomplete="new-password">
+      </div>
+      <button type="submit" class="btn btn--primary" style="width:100%; margin-top:.4rem;">Créer mon compte</button>
+      <p class="auth-toggle">Déjà inscrit ? <button type="button" id="showLogin">Connectez-vous</button></p>
+    </form>
 
-  <h2>Comment choisir</h2>
-  <ul>
-    <li><strong>Vous voulez être livré et suivre la course en direct</strong> → Uber Eats ou Deliveroo.</li>
-    <li><strong>Vous passez chercher votre commande</strong> → commande directe sur le site, pour que tout soit prêt à votre arrivée.</li>
-    <li><strong>Vous voulez éviter les frais de service des plateformes</strong> → commande directe, paiement sur place.</li>
-    <li><strong>Vous commandez pour un groupe ou un gros tex mex à partager</strong> → commande directe : plus simple pour préciser les détails (sauces, formats, suppléments) par message.</li>
-  </ul>
-
-  <h2>Dans tous les cas, même exigence en cuisine</h2>
-  <p>Que la commande parte en livraison ou soit récupérée sur place, elle est préparée de la même façon : pâte fraîche, pain maison, viande cuisinée à la demande. Le mode de commande change la logistique, pas la qualité de ce qu'il y a dans l'assiette.</p>
-
-  <div class="article__cta">
-    <p>Prêt à commander ?</p>
-    <a href="menu.html" class="btn btn--primary">Voir la carte</a>
+    <p id="signupPendingConfirm" class="auth-success" hidden>
+      ✓ Compte créé — vérifiez votre boîte mail pour confirmer votre adresse, puis revenez vous connecter ici.
+    </p>
   </div>
-</article>
+</section>
+
+<section id="dashSection" class="account-dashboard reveal" hidden>
+  <div class="points-card">
+    <span class="points-card__label">Solde de points</span>
+    <span class="points-card__value" id="pointsValue">0</span>
+    <span class="points-card__hint">Mentionnez votre code fidélité en commandant pour cumuler des points — 1 point par euro dépensé.</span>
+  </div>
+
+  <div class="referral-card">
+    <h3>Parrainez un proche</h3>
+    <p>Un dessert offert pour vous, un dessert offert pour la personne parrainée dès sa première commande.</p>
+    <div class="referral-code">
+      <span id="referralCode">——————</span>
+      <button type="button" class="btn btn--outline btn--sm" id="copyReferralLink">Copier le lien</button>
+    </div>
+  </div>
+
+  <div class="referral-card">
+    <h3>Historique</h3>
+    <div class="tx-list" id="txList"></div>
+  </div>
+
+  <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+    <p style="color:var(--cream-mute); font-size:.85rem;">Connecté en tant que <span id="accountEmail" style="color:var(--cream);"></span></p>
+    <button type="button" class="btn btn--ghost btn--sm" id="logoutBtn">Se déconnecter</button>
+  </div>
+</section>
 
 </main>
 
@@ -157,7 +174,6 @@
       <a href="bons-plans.html">Bons plans</a>
       <a href="blog.html">Blog</a>
       <a href="faq.html">FAQ</a>
-      <a href="compte.html">Mon compte</a>
       <a href="index.html#infos">Infos &amp; horaires</a>
     </div>
 
@@ -184,5 +200,6 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="assets/js/supabase-client.js"></script>
 <script src="assets/js/main.js"></script>
+<script src="assets/js/account.js"></script>
 </body>
 </html>

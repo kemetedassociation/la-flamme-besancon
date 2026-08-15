@@ -910,10 +910,26 @@
 
     let items = loadCart();
 
+    // If the visitor is signed in (compte.html, via Supabase — see
+    // supabase-client.js), fold their loyalty code into the order message
+    // so staff can credit points straight from the WhatsApp confirmation
+    // without asking. Fetched once, cached, re-rendered in when it lands —
+    // never blocks the cart from working without it.
+    let loyaltyCode = null;
+    if (window.laFlammeDB) {
+      window.laFlammeDB.auth.getSession().then(({ data }) => {
+        if (!data.session) return;
+        return window.laFlammeDB.from("profiles").select("referral_code").eq("id", data.session.user.id).single();
+      }).then((res) => {
+        if (res && res.data) { loyaltyCode = res.data.referral_code; render(); }
+      }).catch(() => {});
+    }
+
     function buildMessage(total) {
-      if (!items.length) return "Bonjour La Flamme, je souhaite passer une commande.";
+      const codeLine = loyaltyCode ? `\nMon code fidélité : ${loyaltyCode}` : "";
+      if (!items.length) return "Bonjour La Flamme, je souhaite passer une commande." + codeLine;
       const lines = items.map((i) => `• ${i.qty}x ${i.name} — ${formatPrice(i.price * i.qty)}`);
-      return `Bonjour La Flamme 👋\nJe souhaite commander :\n${lines.join("\n")}\n\nTotal : ${formatPrice(total)}\n\nMerci de me confirmer la disponibilité et le mode de retrait 🙏`;
+      return `Bonjour La Flamme 👋\nJe souhaite commander :\n${lines.join("\n")}\n\nTotal : ${formatPrice(total)}${codeLine}\n\nMerci de me confirmer la disponibilité et le mode de retrait 🙏`;
     }
 
     function render() {
