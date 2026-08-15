@@ -116,18 +116,39 @@
     window.addEventListener("scroll", onScroll, { passive: true });
 
     if (burgerBtn && mobileMenu) {
+      const closeMobileMenu = () => {
+        mobileMenu.classList.remove("is-open");
+        burgerBtn.setAttribute("aria-expanded", "false");
+        mobileMenu.setAttribute("aria-hidden", "true");
+        document.body.classList.remove("detail-open");
+        burgerBtn.focus({ preventScroll: true });
+      };
       burgerBtn.addEventListener("click", () => {
         const isOpen = mobileMenu.classList.toggle("is-open");
         burgerBtn.setAttribute("aria-expanded", String(isOpen));
         mobileMenu.setAttribute("aria-hidden", String(!isOpen));
         document.body.classList.toggle("detail-open", isOpen);
+        if (isOpen) mobileMenu.querySelector("a")?.focus({ preventScroll: true });
       });
-      mobileMenu.querySelectorAll("a").forEach((a) => a.addEventListener("click", () => {
-        mobileMenu.classList.remove("is-open");
-        burgerBtn.setAttribute("aria-expanded", "false");
-        mobileMenu.setAttribute("aria-hidden", "true");
-        document.body.classList.remove("detail-open");
-      }));
+      mobileMenu.querySelectorAll("a").forEach((a) => a.addEventListener("click", closeMobileMenu));
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && mobileMenu.classList.contains("is-open")) closeMobileMenu();
+      });
+      // Focus trap, same mechanism as the cart drawer and detail overlay.
+      document.addEventListener("keydown", (e) => {
+        if (e.key !== "Tab" || !mobileMenu.classList.contains("is-open")) return;
+        const focusable = mobileMenu.querySelectorAll("a[href]");
+        if (!focusable.length) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      });
     }
 
     const desktopLinks = Array.from(document.querySelectorAll(".nav__links [data-nav-link]"));
@@ -1021,17 +1042,40 @@
       render();
     }
 
+    let cartOpener = null;
     function openCart() {
       render();
+      cartOpener = document.activeElement;
       cartEl.classList.add("is-open");
       cartEl.setAttribute("aria-hidden", "false");
       document.body.classList.add("cart-open");
+      (cartClose || cartEl.querySelector(".cart__panel")).focus({ preventScroll: true });
     }
     function closeCart() {
       cartEl.classList.remove("is-open");
       cartEl.setAttribute("aria-hidden", "true");
       document.body.classList.remove("cart-open");
+      if (cartOpener) cartOpener.focus({ preventScroll: true });
+      cartOpener = null;
     }
+
+    // Same keyboard focus trap as the detail overlay (§6) — Tab can't
+    // silently leave the drawer while it's open.
+    document.addEventListener("keydown", (e) => {
+      if (e.key !== "Tab" || !cartEl.classList.contains("is-open")) return;
+      const panel = cartEl.querySelector(".cart__panel");
+      const focusable = panel.querySelectorAll('a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])');
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    });
 
     // Fly-to-cart: a cloned thumbnail travels from the clicked button (or
     // its nearest product image) to the cart icon, so the item visibly
