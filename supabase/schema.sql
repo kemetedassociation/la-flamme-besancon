@@ -62,6 +62,14 @@ create policy "profiles_update_own"
 -- Bloque la modification de points/is_staff/referral_code par le client
 -- lui-même, même s'il passe par la policy update ci-dessus — seule une
 -- fonction staff (voir apply_point_transaction plus bas) peut y toucher.
+--
+-- auth.uid() est NULL quand la requête ne vient pas d'une vraie session
+-- client (PostgREST) — c'est le cas du Table Editor et du SQL Editor de
+-- Supabase, utilisés uniquement par vous. On ne bloque donc que les
+-- vraies requêtes clients (auth.uid() renseigné) : un client connecté ne
+-- peut jamais se rendre staff lui-même, mais votre édition manuelle dans
+-- le dashboard, elle, passe — c'est ce qui permet le tout premier
+-- bascule de is_staff à true.
 create or replace function public.protect_profile_fields()
 returns trigger
 language plpgsql
@@ -69,7 +77,8 @@ security definer
 set search_path = public
 as $$
 begin
-  if not coalesce((select is_staff from public.profiles where id = auth.uid()), false) then
+  if auth.uid() is not null
+     and not coalesce((select is_staff from public.profiles where id = auth.uid()), false) then
     new.points := old.points;
     new.pizza_burger_count := old.pizza_burger_count;
     new.is_staff := old.is_staff;
