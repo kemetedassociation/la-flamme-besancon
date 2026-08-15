@@ -115,6 +115,7 @@
       document.getElementById("pointsValue").textContent = profile.points;
       document.getElementById("referralCode").textContent = profile.referral_code;
       document.getElementById("accountEmail").textContent = profile.email;
+      renderStampCard(profile.pizza_burger_count || 0);
 
       const shareUrl = `${location.origin}${location.pathname.replace("compte.html", "")}compte.html?ref=${profile.referral_code}`;
       const copyBtn = document.getElementById("copyReferralLink");
@@ -125,6 +126,16 @@
           copyBtn.textContent = "Copié ✓";
           setTimeout(() => { copyBtn.textContent = original; }, 1600);
         });
+      }
+
+      function renderStampCard(count) {
+        const dots = document.getElementById("stampDots");
+        const hint = document.getElementById("stampHint");
+        if (!dots) return;
+        dots.innerHTML = Array.from({ length: 9 }, (_, i) => `<span class="stamp-dot${i < count ? " is-filled" : ""}"></span>`).join("");
+        hint.textContent = count >= 9
+          ? "Prochain achat pizza ou burger offert 🎉"
+          : `${count} / 9 — encore ${9 - count} achat${9 - count > 1 ? "s" : ""} pizza/burger avant le 10ème offert.`;
       }
 
       const { data: txs } = await db

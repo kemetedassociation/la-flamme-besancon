@@ -47,7 +47,7 @@
 
       const { data } = await db
         .from("profiles")
-        .select("id, email, points, referral_code")
+        .select("id, email, points, referral_code, pizza_burger_count")
         .or(`email.eq.${query},referral_code.eq.${query.toUpperCase()}`)
         .maybeSingle();
 
@@ -61,7 +61,35 @@
       document.getElementById("resultEmail").textContent = data.email;
       document.getElementById("resultCode").textContent = data.referral_code;
       document.getElementById("resultPoints").textContent = data.points;
+      renderStampCount(data.pizza_burger_count);
       resultEl.classList.add("is-visible");
+    });
+
+    function renderStampCount(count) {
+      document.getElementById("resultStamps").textContent = `${count} / 9`;
+    }
+
+    document.getElementById("stampBtn")?.addEventListener("click", async () => {
+      if (!foundProfile) return;
+      const { data: { user } } = await db.auth.getUser();
+
+      const wasFull = foundProfile.pizza_burger_count >= 9;
+      const { error } = await db.from("stamp_events").insert({
+        profile_id: foundProfile.id,
+        category: "pizza_burger",
+        credited_by: user.id,
+      });
+
+      if (error) {
+        creditMsg.textContent = "Erreur : " + error.message;
+        return;
+      }
+
+      foundProfile.pizza_burger_count = wasFull ? 0 : foundProfile.pizza_burger_count + 1;
+      renderStampCount(foundProfile.pizza_burger_count);
+      creditMsg.textContent = wasFull
+        ? `🎉 10ème pizza/burger offerte pour ${foundProfile.email} ! Compteur remis à zéro.`
+        : `✓ Tampon ajouté (${foundProfile.pizza_burger_count}/9) pour ${foundProfile.email}.`;
     });
 
     creditForm?.addEventListener("submit", async (e) => {

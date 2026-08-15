@@ -19,10 +19,12 @@
 
 -- ---- reset propre (sans risque si les tables n'existent pas encore) -------
 drop table if exists public.point_transactions cascade;
+drop table if exists public.stamp_events cascade;
 drop table if exists public.profiles cascade;
 drop function if exists public.protect_profile_fields() cascade;
 drop function if exists public.handle_new_user() cascade;
 drop function if exists public.apply_point_transaction() cascade;
+drop function if exists public.apply_stamp_event() cascade;
 
 -- ---- profils : un par utilisateur inscrit, créé automatiquement ------------
 create table public.profiles (
@@ -32,6 +34,12 @@ create table public.profiles (
   referral_code text unique not null,
   referred_by uuid references public.profiles(id),
   points integer not null default 0,
+  -- Carte de fidélité pizza/burger : 1 tampon par achat, 9 tampons =
+  -- le 10ème est offert (compteur remis à 0 à ce moment-là — voir
+  -- apply_stamp_event plus bas). Même protection anti-triche que points :
+  -- jamais modifiable directement par le client, uniquement via
+  -- stamp_events (staff only).
+  pizza_burger_count integer not null default 0,
   is_staff boolean not null default false,
   created_at timestamptz not null default now()
 );
@@ -63,6 +71,7 @@ as $$
 begin
   if not coalesce((select is_staff from public.profiles where id = auth.uid()), false) then
     new.points := old.points;
+    new.pizza_burger_count := old.pizza_burger_count;
     new.is_staff := old.is_staff;
     new.referral_code := old.referral_code;
   end if;
@@ -133,6 +142,59 @@ $$;
 create trigger apply_point_transaction_trigger
   after insert on public.point_transactions
   for each row execute function public.apply_point_transaction();
+
+-- ---- carte de fidélité pizza/burger : 9 tampons = 10ème offert ------------
+-- Même principe que point_transactions : un registre append-only,
+-- écriture réservée au staff, et une fonction security definer qui fait
+-- le calcul — jamais d'UPDATE direct sur profiles.pizza_burger_count
+-- depuis le client, donc rien à trafiquer.
+create table public.stamp_events (
+  id bigint generated always as identity primary key,
+  profile_id uuid not null references public.profiles(id),
+  category text not null default 'pizza_burger',
+  credited_by uuid references public.profiles(id),
+  created_at timestamptz not null default now()
+);
+
+alter table public.stamp_events enable row level security;
+
+create policy "stamp_events_select_own"
+  on public.stamp_events for select
+  using (auth.uid() = profile_id);
+
+create policy "stamp_events_select_staff"
+  on public.stamp_events for select
+  using (exists (select 1 from public.profiles p where p.id = auth.uid() and p.is_staff));
+
+create policy "stamp_events_insert_staff_only"
+  on public.stamp_events for insert
+  with check (exists (select 1 from public.profiles p where p.id = auth.uid() and p.is_staff));
+
+-- Incrémente le compteur ; au 10ème tampon (count était à 9), remet à 0
+-- au lieu de continuer à monter — c'est ce comptage qui matérialise
+-- "achetez-en 9, le 10ème est offert".
+create or replace function public.apply_stamp_event()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  current_count integer;
+begin
+  select pizza_burger_count into current_count from public.profiles where id = new.profile_id;
+  if current_count >= 9 then
+    update public.profiles set pizza_burger_count = 0 where id = new.profile_id;
+  else
+    update public.profiles set pizza_burger_count = current_count + 1 where id = new.profile_id;
+  end if;
+  return new;
+end;
+$$;
+
+create trigger apply_stamp_event_trigger
+  after insert on public.stamp_events
+  for each row execute function public.apply_stamp_event();
 
 -- ============================================================================
 -- Étape suivante (à faire une seule fois, à la main, dans Supabase) :

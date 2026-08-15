@@ -69,6 +69,7 @@
       <div class="staff-result__row"><span>Client</span><strong id="resultEmail"></strong></div>
       <div class="staff-result__row"><span>Code fidélité</span><strong id="resultCode"></strong></div>
       <div class="staff-result__row"><span>Solde actuel</span><strong id="resultPoints"></strong></div>
+      <div class="staff-result__row"><span>Carte pizza/burger</span><strong id="resultStamps"></strong></div>
 
       <form id="creditForm" class="staff-credit">
         <div class="field">
@@ -77,6 +78,12 @@
         </div>
         <button type="submit" class="btn btn--primary">Créditer les points</button>
       </form>
+
+      <div class="staff-credit">
+        <p style="color:var(--cream-dim); font-size:.85rem; margin:0; flex:1; min-width:200px;">Commande avec une pizza ou un burger ? Ajoutez un tampon — le 10ème est offert.</p>
+        <button type="button" class="btn btn--outline" id="stampBtn">+ 1 tampon pizza/burger</button>
+      </div>
+
       <p id="creditMsg" style="font-size:.85rem; color:var(--green-300);"></p>
     </div>
   </div>

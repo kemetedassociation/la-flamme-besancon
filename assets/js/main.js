@@ -461,6 +461,8 @@
       desc: "Poulet croustillant, riz, sauce sucrée et/ou piquante — servi avec une boisson incluse." },
     { id: "bp-texmex", name: "Tex Mex à partager", price: "7,50€", img: "tex_tenders.jpg",
       desc: "Tenders, nuggets, wings ou mozza sticks, à partir de 6 pièces — idéal à plusieurs. Choisissez votre format sur la carte." },
+    { id: "bp-pizza", name: "Pizza à 8,99€", price: "8,99€", img: "pizza_laflamme.jpg",
+      desc: "Une pizza au choix sur la carte, prix bon plan. Pâte fraîche maison, base tomate ou base crème." },
   ];
 
   // Full tabbed menu — rendered into menu.html's empty panels by renderMenu().
@@ -702,8 +704,55 @@
   function renderCarousel() {
     const track = document.getElementById("carouselTrack");
     if (!track) return;
-    const html = BESTSELLERS.map(cardTemplate).join("");
-    track.innerHTML = html + html; // duplicated once = seamless loop point at -50%
+    track.innerHTML = BESTSELLERS.map(cardTemplate).join("");
+  }
+
+  // Real horizontal scrolling, the same way on a phone and on a desktop:
+  // native trackpad/touch swipe already works via overflow-x (CSS), this
+  // adds a click-and-drag handle for plain-mouse users and two arrow
+  // buttons that scroll by roughly one card. Dragging suppresses the
+  // click that would otherwise fire on release (so a drag never
+  // accidentally opens a card's detail view).
+  function initCarouselScroll() {
+    const track = document.getElementById("carouselTrack");
+    const prevBtn = document.getElementById("carouselPrev");
+    const nextBtn = document.getElementById("carouselNext");
+    if (!track) return;
+
+    let isDown = false;
+    let dragged = false;
+    let startX = 0;
+    let startScroll = 0;
+
+    track.addEventListener("pointerdown", (e) => {
+      if (e.pointerType === "touch") return; // native touch scrolling already works
+      isDown = true;
+      dragged = false;
+      startX = e.clientX;
+      startScroll = track.scrollLeft;
+      track.classList.add("is-dragging");
+      track.setPointerCapture(e.pointerId);
+    });
+    track.addEventListener("pointermove", (e) => {
+      if (!isDown) return;
+      const dx = e.clientX - startX;
+      if (Math.abs(dx) > 4) dragged = true;
+      track.scrollLeft = startScroll - dx;
+    });
+    const endDrag = () => { isDown = false; track.classList.remove("is-dragging"); };
+    track.addEventListener("pointerup", endDrag);
+    track.addEventListener("pointerleave", endDrag);
+    track.addEventListener("click", (e) => {
+      if (dragged) { e.preventDefault(); e.stopPropagation(); dragged = false; }
+    }, { capture: true });
+
+    const scrollByCard = (dir) => {
+      const card = track.querySelector(".card");
+      const step = card ? card.offsetWidth + 19 : 260; // card width + gap
+      track.scrollBy({ left: dir * step, behavior: prefersReducedMotion ? "auto" : "smooth" });
+    };
+    prevBtn?.addEventListener("click", () => scrollByCard(-1));
+    nextBtn?.addEventListener("click", () => scrollByCard(1));
   }
 
   /* ---- 6. Card → Detail FLIP transition ----------------------------------- */
@@ -885,7 +934,7 @@
      human confirms and takes payment as usual.
      ========================================================================== */
   const CART_KEY = "laflamme_cart_v1";
-  const WHATSAPP_NUMBER = "33952991480"; // 09 52 99 14 80 in international format
+  const WHATSAPP_NUMBER = "33666372825"; // 06 66 37 28 25 in international format — WhatsApp only, phone calls stay on 09 52 99 14 80 (shown in the nav/footer)
   const ORDER_EMAIL = "laflammerestaurant25@gmail.com";
 
   function loadCart() {
@@ -1194,6 +1243,7 @@
     renderCards();
     renderMenu();
     renderCarousel();
+    initCarouselScroll();
     initNav();
     initTabs();
     initSizePickers();
