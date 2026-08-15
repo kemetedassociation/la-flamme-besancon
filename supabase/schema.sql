@@ -1,8 +1,14 @@
 -- ============================================================================
 -- LA FLAMME — Schéma fidélité / comptes clients
 -- ----------------------------------------------------------------------------
--- À exécuter une seule fois dans Supabase : Dashboard → SQL Editor → New query
--- → coller ce fichier en entier → Run.
+-- À exécuter dans Supabase : Dashboard → SQL Editor → New query → coller ce
+-- fichier en entier → Run. Peut être relancé sans risque : le bloc du haut
+-- supprime proprement toute version précédente (tables + policies +
+-- fonctions + trigger) avant de tout recréer — pratique si un essai
+-- précédent a laissé une table "profiles" partielle.
+--
+-- ⚠️ Si profiles/point_transactions contiennent déjà de vraies données
+-- clients, ce reset les efface. Sur une base flambant neuve, sans souci.
 --
 -- Principe anti-triche : un client ne peut jamais modifier ses propres points
 -- ni son statut. Seul un compte marqué is_staff peut créditer des points, et
@@ -10,6 +16,13 @@
 -- directement profiles.points) — ça garde un historique complet et vérifiable
 -- de qui a crédité quoi, et quand.
 -- ============================================================================
+
+-- ---- reset propre (sans risque si les tables n'existent pas encore) -------
+drop table if exists public.point_transactions cascade;
+drop table if exists public.profiles cascade;
+drop function if exists public.protect_profile_fields() cascade;
+drop function if exists public.handle_new_user() cascade;
+drop function if exists public.apply_point_transaction() cascade;
 
 -- ---- profils : un par utilisateur inscrit, créé automatiquement ------------
 create table public.profiles (
