@@ -955,7 +955,7 @@
      human confirms and takes payment as usual.
      ========================================================================== */
   const CART_KEY = "laflamme_cart_v1";
-  const WHATSAPP_NUMBER = "33666372825"; // 06 66 37 28 25 in international format — WhatsApp only, phone calls stay on 09 52 99 14 80 (shown in the nav/footer)
+  const WHATSAPP_NUMBER = "33766372825"; // 07 66 37 28 25 in international format — WhatsApp only, phone calls stay on 09 52 99 14 80 (shown in the nav/footer)
   const ORDER_EMAIL = "laflammerestaurant25@gmail.com";
 
   function loadCart() {
@@ -978,6 +978,19 @@
     const cartEmail = document.getElementById("cartEmail");
     if (!cartBtn || !cartEl) return;
 
+    // Mobile sticky bar — built in JS rather than duplicated across every
+    // page's HTML, so it shows up wherever the cart drawer does. Hidden
+    // by default (empty cart) via the .is-visible toggle in render().
+    const cartBar = document.createElement("button");
+    cartBar.type = "button";
+    cartBar.className = "cart-bar";
+    cartBar.innerHTML = `
+      <span class="cart-bar__icon" aria-hidden="true">🛒</span>
+      <span class="cart-bar__text"><span id="cartBarCount">0</span> article<span id="cartBarPlural"></span> — <span id="cartBarTotal">0€</span></span>
+      <span class="cart-bar__cta">Voir la commande</span>`;
+    document.body.appendChild(cartBar);
+    cartBar.addEventListener("click", () => openCart());
+
     let items = loadCart();
 
     // If the visitor is signed in (compte.html, via Supabase — see
@@ -996,10 +1009,10 @@
     }
 
     function buildMessage(total) {
-      const codeLine = loyaltyCode ? `\nMon code fidélité : ${loyaltyCode}` : "";
+      const codeLine = loyaltyCode ? `\n🎟️ Code fidélité : ${loyaltyCode}` : "";
       if (!items.length) return "Bonjour La Flamme, je souhaite passer une commande." + codeLine;
       const lines = items.map((i) => `• ${i.qty}x ${i.name} — ${formatPrice(i.price * i.qty)}`);
-      return `Bonjour La Flamme 👋\nJe souhaite commander :\n${lines.join("\n")}\n\nTotal : ${formatPrice(total)}${codeLine}\n\nMerci de me confirmer la disponibilité et le mode de retrait 🙏`;
+      return `🔥 Nouvelle commande — La Flamme\n\n${lines.join("\n")}\n\n💰 Total : ${formatPrice(total)}${codeLine}\n\n🙏 Merci de me confirmer la disponibilité et le mode de retrait.`;
     }
 
     function render() {
@@ -1031,6 +1044,11 @@
       }
       const total = items.reduce((sum, i) => sum + i.price * i.qty, 0);
       if (cartTotalEl) cartTotalEl.textContent = formatPrice(total);
+
+      cartBar.classList.toggle("is-visible", count > 0);
+      document.getElementById("cartBarCount").textContent = String(count);
+      document.getElementById("cartBarPlural").textContent = count > 1 ? "s" : "";
+      document.getElementById("cartBarTotal").textContent = formatPrice(total);
 
       const message = buildMessage(total);
       if (cartWhatsapp) cartWhatsapp.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
@@ -1234,7 +1252,93 @@
     render();
   }
 
-  /* ---- 10. Custom cursor — desktop/fine-pointer only ------------------------ */
+  // Homepage-only: upgrades the generic loyalty pitch to the visitor's
+  // real points/stamps once a Supabase session is confirmed. No-op on
+  // pages without #rewardsTeaser or if Supabase never loaded.
+  function initRewardsTeaser() {
+    const section = document.getElementById("rewardsTeaser");
+    if (!section || !window.laFlammeDB) return;
+    const titleEl = document.getElementById("rewardsTeaserTitle");
+    const textEl = document.getElementById("rewardsTeaserText");
+    const ctaEl = document.getElementById("rewardsTeaserCta");
+
+    window.laFlammeDB.auth.getSession().then(({ data }) => {
+      if (!data.session) return;
+      return window.laFlammeDB.from("profiles").select("points, pizza_burger_count").eq("id", data.session.user.id).single();
+    }).then((res) => {
+      if (!res || !res.data) return;
+      const points = res.data.points || 0;
+      const left = 9 - (res.data.pizza_burger_count || 0);
+      titleEl.textContent = `Vous avez ${points} point${points > 1 ? "s" : ""}`;
+      textEl.textContent = left <= 0
+        ? "Votre prochaine pizza ou burger est offert 🎉 Mentionnez votre code fidélité en commandant."
+        : `Encore ${left} achat${left > 1 ? "s" : ""} pizza/burger avant le 10ème offert. Mentionnez votre code fidélité en commandant.`;
+      ctaEl.textContent = "Voir mon compte";
+    }).catch(() => {});
+  }
+
+  /* ==========================================================================
+     10. Cookie consent + Google Tag Manager — GTM (which in turn fires
+     Google Analytics) only loads after explicit consent, per the CNIL's
+     rule that audience-measurement cookies need opt-in before they're
+     set. Choice is remembered in localStorage; "Gérer les cookies" in
+     the footer clears it and re-shows the banner.
+
+     No <noscript> GTM iframe on purpose: that fallback is meant to fire
+     unconditionally for visitors with JS disabled, which would bypass
+     consent entirely — since the banner itself requires JS to work, a
+     no-JS visitor never gets a chance to opt in, so nothing should load
+     for them either.
+     ========================================================================== */
+  const GTM_ID = "GTM-TKKW7GH8";
+  const CONSENT_KEY = "laflamme_consent_v1";
+
+  function loadGoogleAnalytics() {
+    if (window.__gtmLoaded) return;
+    window.__gtmLoaded = true;
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
+    const script = document.createElement("script");
+    script.async = true;
+    script.src = `https://www.googletagmanager.com/gtm.js?id=${GTM_ID}`;
+    document.head.appendChild(script);
+  }
+
+  function showConsentBanner() {
+    if (document.querySelector(".consent-banner")) return;
+    const banner = document.createElement("div");
+    banner.className = "consent-banner";
+    banner.innerHTML = `
+      <p class="consent-banner__text">Ce site utilise Google Analytics pour mesurer l'audience. Vos données de navigation ne sont partagées avec aucun autre tiers. <a href="mentions-legales.html">En savoir plus</a>.</p>
+      <div class="consent-banner__actions">
+        <button type="button" class="btn btn--outline btn--sm" id="consentRefuse">Refuser</button>
+        <button type="button" class="btn btn--primary btn--sm" id="consentAccept">Accepter</button>
+      </div>`;
+    document.body.appendChild(banner);
+    banner.querySelector("#consentAccept").addEventListener("click", () => {
+      localStorage.setItem(CONSENT_KEY, "granted");
+      loadGoogleAnalytics();
+      banner.remove();
+    });
+    banner.querySelector("#consentRefuse").addEventListener("click", () => {
+      localStorage.setItem(CONSENT_KEY, "denied");
+      banner.remove();
+    });
+  }
+
+  function initCookieConsent() {
+    const stored = localStorage.getItem(CONSENT_KEY);
+    if (stored === "granted") { loadGoogleAnalytics(); }
+    else if (stored !== "denied") { showConsentBanner(); }
+
+    const manageBtn = document.getElementById("manageCookiesLink");
+    manageBtn?.addEventListener("click", (e) => {
+      e.preventDefault();
+      localStorage.removeItem(CONSENT_KEY);
+      showConsentBanner();
+    });
+  }
+
   function initCursor() {
     if (prefersReducedMotion) return;
     if (!window.matchMedia("(pointer: fine)").matches) return;
@@ -1292,6 +1396,8 @@
     initTabs();
     initSizePickers();
     initCart();
+    initRewardsTeaser();
+    initCookieConsent();
     initDetailOverlay();
     initReveal();
     initHeroVideo();

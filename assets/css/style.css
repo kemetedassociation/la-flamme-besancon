@@ -982,6 +982,10 @@ body.detail-open { overflow: hidden; }
   display: flex; justify-content: space-between; flex-wrap: wrap; gap: .6rem;
   color: var(--cream-mute); font-size: .8rem;
 }
+.footer__bottom a { color: var(--cream-mute); transition: color var(--dur-micro) var(--ease-standard); }
+.footer__bottom a:hover { color: var(--terracotta-light); }
+.footer__link-btn { font: inherit; color: var(--cream-mute); background: none; border: none; padding: 0; cursor: pointer; transition: color var(--dur-micro) var(--ease-standard); }
+.footer__link-btn:hover { color: var(--terracotta-light); }
 
 /* ---------------------------------------------------------------------- */
 /* Responsive                                                              */
@@ -1143,6 +1147,59 @@ body.detail-open { overflow: hidden; }
 .cart__hint { font-size: .74rem; color: var(--cream-mute); margin-top: .9rem; line-height: 1.5; text-align: center; }
 
 body.cart-open { overflow: hidden; }
+
+/* Sticky mobile cart bar — injected in JS (see initCart in main.js), shown
+   only once the cart has items, hidden above 600px where the nav cart
+   icon is already visible at all times. */
+.cart-bar {
+  display: none;
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: 250;
+  align-items: center;
+  gap: .7rem;
+  width: 100%;
+  padding: .8rem 1.1rem calc(.8rem + env(safe-area-inset-bottom, 0px));
+  background: var(--terracotta);
+  color: var(--cream);
+  border: none;
+  box-shadow: var(--shadow-3);
+  transform: translateY(100%);
+  transition: transform var(--dur-ui) var(--ease-out);
+}
+.cart-bar.is-visible { transform: translateY(0); }
+.cart-bar__icon { font-size: 1.1rem; line-height: 1; }
+.cart-bar__text { flex: 1 1 auto; text-align: left; font-size: .86rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+.cart-bar__cta { font-weight: 800; font-size: .82rem; text-decoration: underline; text-underline-offset: 3px; white-space: nowrap; }
+@media (min-width: 601px) {
+  .cart-bar { display: none !important; }
+}
+@media (max-width: 600px) {
+  .cart-bar.is-visible { display: flex; }
+}
+
+/* Cookie consent banner — see initCookieConsent in main.js */
+.consent-banner {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 1.1rem 1.5rem calc(1.1rem + env(safe-area-inset-bottom, 0px));
+  background: var(--surface);
+  border-top: 1px solid var(--line-strong);
+  box-shadow: var(--shadow-3);
+}
+.consent-banner__text { flex: 1 1 360px; color: var(--cream-dim); font-size: .85rem; line-height: 1.55; margin: 0; }
+.consent-banner__text a { color: var(--terracotta-light); text-decoration: underline; text-underline-offset: 2px; }
+.consent-banner__actions { display: flex; gap: .7rem; flex-shrink: 0; }
+@media (max-width: 480px) {
+  .consent-banner__actions { width: 100%; }
+  .consent-banner__actions .btn { flex: 1; }
+}
 
 /* ==========================================================================
    ADD-TO-CART controls (menu rows + grid cards)

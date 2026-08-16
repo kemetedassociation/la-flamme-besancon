@@ -221,6 +221,19 @@
   </div>
 </section>
 
+<!-- Fidélité teaser — generic pitch by default, upgraded with the visitor's
+     real points/stamps once main.js confirms a Supabase session (see
+     initRewardsTeaser). -->
+<section class="best" style="padding-top:0;" id="rewardsTeaser">
+  <div class="info-card reveal" style="max-width:1240px; margin:0 auto; flex-direction:row; align-items:center; justify-content:space-between; gap:1.5rem; flex-wrap:wrap;">
+    <div>
+      <h3 id="rewardsTeaserTitle">Cumulez des points à chaque commande</h3>
+      <p id="rewardsTeaserText">1 point par euro dépensé, une pizza ou un burger offert tous les 10 achats, un dessert offert dès votre premier parrainage.</p>
+    </div>
+    <a href="compte.html" class="btn btn--primary" id="rewardsTeaserCta">Créer mon compte</a>
+  </div>
+</section>
+
 <section class="infos" id="infos">
   <div class="infos__grid">
     <div class="infos__photo reveal">
@@ -362,6 +375,8 @@
   </div>
   <div class="footer__bottom">
     <span>© 2026 La Flamme Restaurant — Besançon</span>
+    <a href="mentions-legales.html">Mentions légales</a>
+    <button type="button" class="footer__link-btn" id="manageCookiesLink">Gérer les cookies</button>
     <span>@la.flamme.besancon</span>
   </div>
 </footer>

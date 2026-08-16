@@ -39,14 +39,34 @@
       clearError();
     });
 
+    function setBusy(form, busy) {
+      const btn = form.querySelector('button[type="submit"]');
+      if (!btn) return;
+      if (busy) {
+        btn.dataset.label = btn.textContent;
+        btn.textContent = "Connexion…";
+        btn.disabled = true;
+      } else {
+        btn.textContent = btn.dataset.label || btn.textContent;
+        btn.disabled = false;
+      }
+    }
+
     loginForm?.addEventListener("submit", async (e) => {
       e.preventDefault();
       clearError();
       const email = document.getElementById("loginEmail").value.trim();
       const password = document.getElementById("loginPassword").value;
-      const { error } = await db.auth.signInWithPassword({ email, password });
-      if (error) { showError(traduireErreur(error)); return; }
-      await renderDashboard();
+      setBusy(loginForm, true);
+      try {
+        const { error } = await db.auth.signInWithPassword({ email, password });
+        if (error) { showError(traduireErreur(error)); return; }
+        location.href = "index.html";
+      } catch (err) {
+        showError("Impossible de contacter le serveur. Vérifiez votre connexion et réessayez.");
+      } finally {
+        setBusy(loginForm, false);
+      }
     });
 
     signupForm?.addEventListener("submit", async (e) => {
@@ -56,7 +76,16 @@
       const password = document.getElementById("signupPassword").value;
       if (password.length < 6) { showError("Le mot de passe doit faire au moins 6 caractères."); return; }
 
-      const { data, error } = await db.auth.signUp({ email, password });
+      setBusy(signupForm, true);
+      let data, error;
+      try {
+        ({ data, error } = await db.auth.signUp({ email, password }));
+      } catch (err) {
+        showError("Impossible de contacter le serveur. Vérifiez votre connexion et réessayez.");
+        setBusy(signupForm, false);
+        return;
+      }
+      setBusy(signupForm, false);
       if (error) { showError(traduireErreur(error)); return; }
 
       // Supabase's default project settings require confirming the e-mail
@@ -86,7 +115,7 @@
         }
       }
 
-      await renderDashboard();
+      location.href = "index.html";
     });
 
     logoutBtn?.addEventListener("click", async () => {
@@ -97,6 +126,7 @@
     function traduireErreur(error) {
       const msg = error.message || "";
       if (msg.includes("Invalid login credentials")) return "E-mail ou mot de passe incorrect.";
+      if (msg.includes("Email not confirmed")) return "Confirmez votre e-mail avant de vous connecter (vérifiez votre boîte de réception, y compris les spams).";
       if (msg.includes("already registered")) return "Un compte existe déjà avec cet e-mail.";
       if (msg.includes("Password should be")) return "Mot de passe trop court (6 caractères minimum).";
       return "Une erreur est survenue. Réessayez.";
